@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Autism Detection System</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+
+            height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            background:
+            linear-gradient(rgba(0,0,0,0.5),
+            rgba(0,0,0,0.5)),
+
+            url('https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1600&auto=format&fit=crop');
+
+            background-size:cover;
+            background-position:center;
+        }
+
+        .login-container{
+
+            width:400px;
+
+            padding:40px;
+
+            border-radius:25px;
+
+            background:rgba(255,255,255,0.15);
+
+            backdrop-filter:blur(12px);
+
+            box-shadow:0px 0px 30px rgba(0,0,0,0.4);
+
+            text-align:center;
+
+            color:white;
+
+            animation:fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn{
+
+            from{
+                opacity:0;
+                transform:translateY(-20px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .login-container h1{
+
+            font-size:42px;
+
+            margin-bottom:10px;
+
+            color:#fff;
+        }
+
+        .login-container p{
+
+            margin-bottom:30px;
+
+            color:#ddd;
+
+            font-size:16px;
+        }
+
+        .input-box{
+
+            margin:20px 0;
+        }
+
+        .input-box input{
+
+            width:100%;
+
+            padding:15px;
+
+            border:none;
+
+            border-radius:12px;
+
+            outline:none;
+
+            font-size:16px;
+
+            background:rgba(255,255,255,0.9);
+        }
+
+        .login-btn{
+
+            width:100%;
+
+            padding:15px;
+
+            margin-top:15px;
+
+            border:none;
+
+            border-radius:12px;
+
+            background:linear-gradient(135deg,#00b894,#00cec9);
+
+            color:white;
+
+            font-size:18px;
+
+            font-weight:bold;
+
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        .login-btn:hover{
+
+            transform:scale(1.03);
+
+            background:linear-gradient(135deg,#00cec9,#0984e3);
+        }
+
+        #msg{
+
+            margin-top:20px;
+
+            color:yellow;
+
+            font-size:18px;
+
+            font-weight:bold;
+        }
+
+        .footer{
+
+            margin-top:25px;
+
+            font-size:14px;
+
+            color:#ddd;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1>Autism Detection</h1>
+
+    <p>Login to continue</p>
+
+    <div class="input-box">
+
+        <input type="text"
+        id="username"
+        placeholder="Enter Username">
+
+    </div>
+
+    <div class="input-box">
+
+        <input type="password"
+        id="password"
+        placeholder="Enter Password">
+
+    </div>
+
+    <button class="login-btn"
+    onclick="login()">
+
+        Login
+
+    </button>
+
+    <p id="msg"></p>
+
+    <div class="footer">
+
+        © Autism Detection System
+
+    </div>
+
+</div>
+
+<script>
+
+function login(){
+
+    let user =
+    document.getElementById("username").value;
+
+    let pass =
+    document.getElementById("password").value;
+
+    fetch("http://localhost:8080/login",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            username:user,
+            password:pass
+
+        })
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        if(data === "success"){
+
+            // ✅ Save Login Session
+
+            sessionStorage.setItem(
+            "loggedIn","true");
+
+            // ✅ Open Upload Page
+
+            window.location.href =
+            "/index.html";
+
+        }else{
+
+            document.getElementById("msg")
+            .innerText = "Invalid Login";
+        }
+
+    })
+
+    .catch(error => {
+
+        document.getElementById("msg")
+        .innerText = "Server Error";
+    });
+
+}
+
+</script>
+
+</body>
+</html>

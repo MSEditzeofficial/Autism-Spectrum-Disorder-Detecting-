@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Autism Detection System</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+
+            height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            background:url('https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=1600&auto=format&fit=crop') no-repeat center center/cover;
+        }
+
+        /* Dark Overlay */
+
+        body::before{
+
+            content:"";
+
+            position:absolute;
+
+            width:100%;
+            height:100%;
+
+            background:rgba(0,0,0,0.5);
+        }
+
+        .container{
+
+            position:relative;
+
+            width:450px;
+
+            padding:40px;
+
+            border-radius:20px;
+
+            background:rgba(255,255,255,0.15);
+
+            backdrop-filter:blur(10px);
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+
+            text-align:center;
+
+            color:white;
+        }
+
+        h1{
+
+            margin-bottom:30px;
+
+            font-size:38px;
+        }
+
+        input{
+
+            width:100%;
+
+            padding:12px;
+
+            margin:20px 0;
+
+            border:none;
+
+            border-radius:10px;
+
+            outline:none;
+
+            font-size:16px;
+
+            background:white;
+        }
+
+        button{
+
+            width:100%;
+
+            padding:14px;
+
+            margin-top:15px;
+
+            border:none;
+
+            border-radius:10px;
+
+            background:#00b894;
+
+            color:white;
+
+            font-size:18px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        button:hover{
+
+            background:#019875;
+
+            transform:scale(1.03);
+        }
+           .custom-file{
+
+    display:inline-block;
+
+    padding:14px 25px;
+
+    background:#6c5ce7;
+
+    color:white;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    transition:0.3s;
+
+    margin-top:10px;
+}
+
+.custom-file:hover{
+
+    background:#4834d4;
+}
+
+.custom-file input{
+
+    display:none;
+}
+
+#fileName{
+
+    margin-top:15px;
+
+    color:#ffeaa7;
+
+    font-size:16px;
+
+    font-weight:bold;
+}
+        #result{
+
+            margin-top:20px;
+
+            font-size:18px;
+
+            color:yellow;
+
+            font-weight:bold;
+
+            white-space:pre-line;
+        }
+
+        .csv-btn{
+
+            background:#6c5ce7;
+        }
+
+        .csv-btn:hover{
+
+            background:#4834d4;
+        }
+
+       
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Autism Detection</h1>
+
+    <label class="custom-file">
+
+    <input type="file" id="fileInput">
+
+    <span>Select Image</span>
+
+</label>
+
+<p id="fileName">No file selected</p>
+
+    <button onclick="upload()">Upload Image</button>
+
+    <div id="result"></div>
+
+    <!-- CSV Button -->
+
+    <button class="csv-btn" onclick="openCSV()">
+        View CSV Analysis
+    </button>
+
+    <!-- Logout Button -->
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+<script>
+
+    // ✅ Login Protection
+
+    if(sessionStorage.getItem("loggedIn") != "true"){
+
+        window.location.href="/login.html";
+    }
+
+    // ✅ File Selection Handler
+
+    document.getElementById("fileInput").addEventListener("change", function(){
+
+        let fileName = this.files.length > 0 ? this.files[0].name : "No file selected";
+
+        document.getElementById("fileName").innerText = fileName;
+    });
+
+    // ✅ Upload Function
+
+    function upload(){
+
+        let file = document.getElementById("fileInput").files[0];
+
+        if(!file){
+
+            alert("Please select an image");
+
+            return;
+        }
+
+        let formData = new FormData();
+
+        formData.append("file",file);
+
+        fetch("http://localhost:8080/upload",{
+
+            method:"POST",
+
+            body:formData
+
+        })
+
+        .then(res => {
+
+            if(!res.ok){
+
+                throw new Error("Server Error : " + res.status);
+            }
+
+            return res.text();
+        })
+
+        .then(data => {
+
+            document.getElementById("result").innerText = data;
+        })
+
+        .catch(err => {
+
+            document.getElementById("result").innerText = err.message;
+        });
+
+    }
+
+    // ✅ Open CSV Page
+
+    function openCSV(){
+
+        window.location.href="/csv.html";
+    }
+
+    // ✅ Logout Function
+
+    function logout(){
+
+        sessionStorage.removeItem("loggedIn");
+
+        window.location.href="/login.html";
+    }
+
+</script>
+
+</body>
+</html>
